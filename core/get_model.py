@@ -35,6 +35,13 @@ def create_model(cfg):
         edge_type = 'Bond'
         nout = 10 if cfg.dataset == 'peptides-func' else 11
 
+    elif cfg.dataset == 'COCO-SP':
+        nfeat_node = 14
+        nfeat_edge = 2
+        node_type = 'Linear'
+        edge_type = 'Linear'
+        nout = 81
+
     elif cfg.dataset == 'CSL':
         node_type = 'Discrete'
         edge_type = 'Discrete'
@@ -84,7 +91,8 @@ def create_model(cfg):
                      dropout=cfg.train.dropout,
                      mlpmixer_dropout=cfg.train.mlpmixer_dropout,
                      n_patches=cfg.metis.n_patches,
-                     patch_rw_dim=cfg.pos_enc.patch_rw_dim)
+                     patch_rw_dim=cfg.pos_enc.patch_rw_dim,
+                     graph_level=False)
 
     else:
         if cfg.dataset == 'TreeDataset':

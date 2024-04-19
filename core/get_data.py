@@ -1,3 +1,4 @@
+from torch_geometric.datasets import LRGBDataset
 from core.data_utils.peptides_functional import PeptidesFunctionalDataset
 from core.data_utils.peptides_structural import PeptidesStructuralDataset
 
@@ -115,6 +116,12 @@ def create_dataset(cfg):
         split_idx = dataset.get_idx_split()
         train_dataset, val_dataset, test_dataset = dataset[split_idx['train']
                                                            ], dataset[split_idx['val']], dataset[split_idx['test']]
+        train_dataset.transform, val_dataset.transform, test_dataset.transform = transform_train, transform_eval, transform_eval
+
+    elif cfg.dataset == 'COCO-SP':
+        train_dataset = LRGBDataset(root='dataset', name=cfg.dataset, split='train', pre_transform=pre_transform)
+        val_dataset = LRGBDataset(root='dataset', name=cfg.dataset, split='val', pre_transform=pre_transform)
+        test_dataset = LRGBDataset(root='dataset', name=cfg.dataset, split='test', pre_transform=pre_transform)
         train_dataset.transform, val_dataset.transform, test_dataset.transform = transform_train, transform_eval, transform_eval
 
     elif cfg.dataset == 'CSL':

@@ -27,12 +27,14 @@ class GraphMLPMixer(nn.Module):
                  res=True,
                  pooling='mean',
                  n_patches=32,
-                 patch_rw_dim=0):
+                 patch_rw_dim=0,
+                 graph_level=False):
 
         super().__init__()
         self.dropout = dropout
         self.use_rw = rw_dim > 0
         self.use_lap = lap_dim > 0
+        self.graph_level = graph_level
 
         self.pooling = pooling
         self.res = res
@@ -58,8 +60,7 @@ class GraphMLPMixer(nn.Module):
         self.transformer_encoder = getattr(gMHA_wrapper, gMHA_type)(
             nhid=nhid, dropout=mlpmixer_dropout, nlayer=nlayer_mlpmixer, n_patches=n_patches)
 
-        self.output_decoder = MLP(
-            nhid, nout, nlayer=2, with_final_activation=False)
+        self.output_decoder = MLP(nhid if self.graph_level else nhid*2, nout, nlayer=2, with_final_activation=False)
 
     def forward(self, data):
         x = self.input_encoder(data.x.squeeze())
@@ -98,9 +99,14 @@ class GraphMLPMixer(nn.Module):
         mixer_x = self.transformer_encoder(mixer_x, data.coarsen_adj if hasattr(
             data, 'coarsen_adj') else None, ~data.mask)
 
-        # Global Average Pooling
-        x = (mixer_x * data.mask.unsqueeze(-1)).sum(1) / \
-            data.mask.sum(1, keepdim=True)
+        if self.graph_level:    
+            # Global Average Pooling
+            x = (mixer_x * data.mask.unsqueeze(-1)).sum(1) / \
+                data.mask.sum(1, keepdim=True)
+        else:
+            mixer_x = Rearrange('B p d -> (B p) d')(mixer_x)
+            x = torch.cat([x, mixer_x[batch_x]], dim=-1)
+            x = scatter(x, data.subgraphs_nodes_mapper, dim=0, reduce='mean')
 
         # Readout
         x = self.output_decoder(x)

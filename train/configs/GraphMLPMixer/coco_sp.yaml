@@ -1,0 +1,18 @@
+dataset: COCO-SP
+num_workers: 8
+model:
+  gMHA_type: Hadamard
+  gnn_type: GINEConv
+  nlayer_gnn: 4
+  nlayer_mlpmixer: 2
+train:
+  batch_size: 512
+  runs: 1
+  lr_patience: 20
+  epochs: 200
+  mlpmixer_dropout: 0.5
+metis:
+  n_patches: 32
+pos_enc:
+  rw_dim: 0
+  lap_dim: 16
