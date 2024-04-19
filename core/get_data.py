@@ -124,6 +124,12 @@ def create_dataset(cfg):
         test_dataset = LRGBDataset(root='dataset', name=cfg.dataset, split='test', pre_transform=pre_transform)
         train_dataset.transform, val_dataset.transform, test_dataset.transform = transform_train, transform_eval, transform_eval
 
+    elif cfg.dataset == 'PascalVOC-SP':
+        train_dataset = LRGBDataset(root="dataset", name="PascalVOC-SP", split="train", pre_transform=pre_transform)
+        val_dataset = LRGBDataset(root="dataset", name="PascalVOC-SP", split="val", pre_transform=pre_transform)
+        test_dataset = LRGBDataset(root="dataset", name="PascalVOC-SP", split="test", pre_transform=pre_transform)
+        train_dataset.transform, val_dataset.transform, test_dataset.transform = transform_train, transform_eval, transform_eval
+
     elif cfg.dataset == 'CSL':
         root = 'dataset'
         dataset = GNNBenchmarkDataset(

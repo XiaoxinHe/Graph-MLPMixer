@@ -42,6 +42,13 @@ def create_model(cfg):
         edge_type = 'Linear'
         nout = 81
 
+    elif cfg.dataset == 'PascalVOC-SP':
+        nfeat_node = 14
+        nfeat_edge = 2
+        node_type = 'Linear'
+        edge_type = 'Linear'
+        nout = 21
+
     elif cfg.dataset == 'CSL':
         node_type = 'Discrete'
         edge_type = 'Discrete'

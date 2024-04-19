@@ -1,0 +1,19 @@
+dataset: PascalVOC-SP
+num_workers: 8
+model:
+  gMHA_type: Hadamard
+  gnn_type: GINEConv
+  nlayer_gnn: 4
+  nlayer_mlpmixer: 2
+train:
+  lr: 0.0005
+  runs: 1
+  lr_patience: 20
+  epochs: 300
+  mlpmixer_dropout: 0.5
+metis:
+  n_patches: 32
+pos_enc:
+  rw_dim: 0
+  lap_dim: 16
+  patch_num_diff: 0
